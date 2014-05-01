@@ -19,7 +19,7 @@
 #include "uart_intr.h"
 #include "adc.h"
 
-/* sizes: bool: 1; short, int, ptr, size_t: 2;  long: 4;  long long: 8 */ 
+/* sizes: bool: 1; short, int, ptr, size_t: 2;  long: 4;  long long: 8 */
 
 //pwm0: timer0A, pwm1: timer0B, pwm2: timer1A, pwm3: timer1B
 #define PORT_DIN PORTA
@@ -118,7 +118,7 @@ putbyte(uint8_t b)
 	for (int8_t bit = 7; bit >= 0; bit--) {
 		CLKHI;
 		if ((b >> bit) & 1)
-			DATAHI;	
+			DATAHI;
 		else
 			DATALO;
 
@@ -173,7 +173,7 @@ cmd_step_instr(void) {
 uint16_t
 cmd_get_pc(void)
 {
-	putbyte(0x28);	
+	putbyte(0x28);
 	uint16_t r = getbyte();
 	r <<= 8;
 	r |= getbyte();
@@ -183,7 +183,7 @@ cmd_get_pc(void)
 uint16_t
 cmd_get_chip_id(void)
 {
-	putbyte(0x68);	
+	putbyte(0x68);
 	uint16_t r = getbyte();
 	r <<= 8;
 	r |= getbyte();
@@ -193,7 +193,7 @@ cmd_get_chip_id(void)
 void
 cmd_write_config(uint8_t cfg)
 {
-	putbyte(0x1d);	
+	putbyte(0x1d);
 	putbyte(cfg);
 	getbyte(); //discard
 }
@@ -352,28 +352,30 @@ main(void)
 			uint8_t num = uart_get();
 			uint8_t c = 0;
 			uint8_t d[3];
-			while (c < 3 && num--) {
+			while (c < 3 && num) {
 				d[c++] = uart_get();
+				num--;
 			}
-
-			uart_put(cmd_exec(d, c));
 
 			while (num--)
 				uart_get(); //discard excess elements
+
+			uart_put(cmd_exec(d, c));
 
 			break;}
 		case 'N':{//step replace instruction
 			uint8_t num = uart_get();
 			uint8_t c = 0;
 			uint8_t d[3];
-			while (c < 3 && num--) {
+			while (c < 3 && num) {
 				d[c++] = uart_get();
+				num--;
 			}
-
-			uart_put(cmd_step_replace(d, c));
 
 			while (num--)
 				uart_get(); //discard excess elements
+
+			uart_put(cmd_step_replace(d, c));
 
 			break;}
 		case 'n'://step next instruction
