@@ -268,7 +268,7 @@ ev_WCFG(int ac, char **av)
 	if (ac != 1)
 		usage_WCFG(stderr, a0, EXIT_FAILURE);
 
-	uint8_t b = (uint8_t)strtoul(av[1], NULL, 0);
+	uint8_t b = (uint8_t)strtoul(av[0], NULL, 0);
 	D("writing cfg byte %#02hhx", b);
 
 	sc_put('C');
