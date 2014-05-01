@@ -262,10 +262,11 @@ ev_RCFG(int ac, char **av)
 static bool
 ev_WCFG(int ac, char **av)
 {
+	const char *a0 = av[0];
 	NOOPTS(WCFG)
 
-	if (ac != 2)
-		usage_WCFG(stderr, av[0], EXIT_FAILURE);
+	if (ac != 1)
+		usage_WCFG(stderr, a0, EXIT_FAILURE);
 
 	uint8_t b = (uint8_t)strtoul(av[1], NULL, 0);
 	D("writing cfg byte %#02hhx", b);
@@ -279,10 +280,11 @@ ev_WCFG(int ac, char **av)
 static bool
 ev_REPLINSTR(int ac, char **av)
 {
+	const char *a0 = av[0];
 	NOOPTS(REPLINSTR)
 
-	if (ac <= 1 || ac > 3)
-		usage_REPLINSTR(stderr, av[0], EXIT_FAILURE);
+	if (ac < 1 || ac > 3)
+		usage_REPLINSTR(stderr, a0, EXIT_FAILURE);
 
 	sc_put('N');
 	sc_put(ac);
@@ -299,10 +301,14 @@ ev_REPLINSTR(int ac, char **av)
 static bool
 ev_RUNINSTR(int ac, char **av)
 {
+	const char *a0 = av[0];
 	NOOPTS(RUNINSTR)
 
-	if (ac <= 1 || ac > 3)
-		usage_RUNINSTR(stderr, av[0], EXIT_FAILURE);
+	if (ac < 1 || ac > 3) {
+		N("huh");
+		usage_RUNINSTR(stderr, a0, EXIT_FAILURE);
+	} else
+		N("x");
 
 	sc_put('I');
 	sc_put(ac);
@@ -331,10 +337,11 @@ ev_NEXTINSTR(int ac, char **av)
 static bool
 ev_BRK(int ac, char **av)
 {
+	const char *a0 = av[0];
 	NOOPTS(BRK)
 
-	if (ac != 4)
-		usage_BRK(stderr, av[0], EXIT_FAILURE);
+	if (ac != 3)
+		usage_BRK(stderr, a0, EXIT_FAILURE);
 
 	sc_put('B');
 	while(ac--) {
@@ -350,10 +357,11 @@ ev_BRK(int ac, char **av)
 static bool
 ev_WRAW(int ac, char **av)
 {
+	const char *a0 = av[0];
 	NOOPTS(WRAW)
 
-	if (ac != 2)
-		usage_WRAW(stderr, av[0], EXIT_FAILURE);
+	if (ac != 1)
+		usage_WRAW(stderr, a0, EXIT_FAILURE);
 
 	sc_put('>');
 	uint8_t b = (uint8_t)strtoul(*av++, NULL, 0);
