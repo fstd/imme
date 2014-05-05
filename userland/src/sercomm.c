@@ -178,7 +178,7 @@ sc_cleanup(void)
 int
 mkbaud(int actualrate)
 {
-#ifdef PLATFORM_LINUX
+#ifdef PLATFORM_LUNIX
 	switch (actualrate) {
 		case 1800: return B1800;
 		case 2400: return B2400;
