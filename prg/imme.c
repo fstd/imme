@@ -97,7 +97,7 @@ getbyte(void)
 		CLKHI; //devices drives
 		_delay_ms(10);
 
-		if (xsample(0) >= 0x200)
+		if (bsample())
 			r |= (1<<bit);
 
 		CLKLO;

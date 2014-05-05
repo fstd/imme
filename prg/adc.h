@@ -5,8 +5,7 @@
 #ifndef ADC_H
 #define ADC_H 1
 #include <stdint.h>
-uint16_t sample(uint8_t chan);
-uint16_t xsample(uint8_t chan);
+uint8_t bsample(void);
 void adc_init(uint8_t adps); //0-7
 #endif /* ADC_H */
 

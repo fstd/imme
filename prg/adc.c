@@ -6,23 +6,12 @@
 #include <avr/io.h>
 #include <avr/cpufunc.h>
 
-uint16_t
-sample(uint8_t chan)
+uint8_t
+bsample(void)
 {
-	ADMUX = (ADMUX & 0xf0) | chan;
 	ADCSRA |= (1<<ADSC);
 	while(ADCSRA & (1<<ADSC));
-	uint16_t res = ADCL;
-	res |= (ADCH<<8);
-	return res;
-}
-
-uint16_t xsample(uint8_t chan) {
-	uint16_t res = 0;
-	for(uint8_t i = 0; i < 4; i++) {
-		res += sample(chan);
-	}
-	return res >> 2;
+	return ADCH;
 }
 
 void
