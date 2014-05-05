@@ -95,15 +95,14 @@ getbyte(void)
 	uint8_t r = 0;
 	for (int8_t bit = 7; bit >= 0; bit--) {
 		CLKHI; //devices drives
-		_delay_ms(10);
+		_delay_us(1);
 
 		if (bsample())
 			r |= (1<<bit);
 
 		CLKLO;
 
-		_delay_ms(10);
-
+		_delay_us(1);
 	}
 
 	/* enable data output */
@@ -122,11 +121,11 @@ putbyte(uint8_t b)
 		else
 			DATALO;
 
-		_delay_ms(10);
+		_delay_us(1);
 
 		CLKLO; //device samples
 
-		_delay_ms(10);
+		_delay_us(1);
 	}
 
 	DATALO;
