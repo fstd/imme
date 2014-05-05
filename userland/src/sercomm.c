@@ -78,6 +78,7 @@ sc_init(const char *device, int baud)
 	cntrl.c_cc[VMIN] = 1;
 	cntrl.c_cc[VTIME] = 0;
 
+	cfmakeraw(&cntrl);
 	if (tcsetattr(fd, TCSADRAIN, &cntrl) != 0)
 		CE("tcsetattr");
 
