@@ -23,10 +23,10 @@
 #define DEF_BAUD 38400
 
 //when using sercommd (-D):
-#define DEF_TRG "127.0.0.1"
+#define DEF_TRG "localhost"
 #define DEF_PORT 34321
 
-static bool s_skipinit;
+static bool s_skipinit = true;
 static char *s_dev;
 static int s_baud;
 static bool s_stdin = true;
@@ -44,7 +44,7 @@ process_args(int *argc, char ***argv)
 {
 	char *a0 = (*argv)[0];
 
-	for(int ch; (ch = getopt(*argc, *argv, "d:b:Denvqch")) != -1;) {
+	for(int ch; (ch = getopt(*argc, *argv, "d:b:Dervqch")) != -1;) {
 		switch (ch) {
 		case 'd':
 			s_dev = strdup(optarg);
@@ -61,9 +61,9 @@ process_args(int *argc, char ***argv)
 			s_failterm = true;
 			D("will terminate on eval failure");
 			break;
-		case 'n':
-			s_skipinit = true;
-			D("will not reinit target");
+		case 'r':
+			s_skipinit = false;
+			D("will reinit target");
 			break;
 		case 'v':
 			dbg_setlvl(dbg_getlvl()+1);
@@ -140,7 +140,7 @@ usage(FILE *str, const char *a0, int ec)
 	H("\t-e: Abort when evaluation of a line fails (``set -e''-like)");
 	H("\t-D: Use sercommd via TCP instead of directly opening the serport");
 	H("\t      When used, -d and -b specify target host and port, respectively");
-	H("\t-n: Skip target initialization (rst+dbgen)");
+	H("\t-r: Reinit target (rst+dbgen)");
 	H("\t-v: Increase verbosity on stderr");
 	H("\t-q: Decrease verbosity on stderr");
 	H("\t-c: Use fancy bash(1)-style color sequences on stderr");
