@@ -11,5 +11,7 @@ int sc_init(const char *device, int baud);
 int sc_init_tcp(const char *host, uint16_t port);
 uint8_t sc_get(void);
 void sc_put(uint8_t c);
+void sc_dumpstats(void);
+void sc_resetstats(void);
 
 #endif /* SERCOMM_H */

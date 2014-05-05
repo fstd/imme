@@ -15,11 +15,14 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
+#include <libsrsbsns/addr.h>
 #include "dbglog.h"
 
 #include "sercomm.h"
 
 static int s_fd = -1;
+static int s_wc = 0;
+static int s_rc = 0;
 
 static void eat_buffer(void);
 
@@ -44,7 +47,7 @@ sc_init(const char *device, int baud)
 	struct termios	cntrl;
 	int fd;
 
-	fd = open(device, O_RDWR|O_DIRECT);
+	fd = open(device, O_RDWR);
 
 	if (fd == -1)
 		CE("open '%s'", device);
@@ -66,7 +69,7 @@ sc_init(const char *device, int baud)
 	if (cfsetispeed(&cntrl, baud) != 0)
 		CE("cfsetispeed");
 
-	cntrl.c_cflag &= ~(CSIZE|PARENB);
+	cntrl.c_cflag &= ~(CSIZE|PARENB|HUPCL);
 	cntrl.c_cflag |= CS8;
 	cntrl.c_cflag |= CLOCAL;
 	cntrl.c_iflag &= ~(ISTRIP|ICRNL);
@@ -81,6 +84,18 @@ sc_init(const char *device, int baud)
 	return s_fd = fd;
 }
 
+void
+sc_dumpstats(void)
+{
+	I("read: %d, wrote: %d", s_rc, s_wc);
+}
+
+void
+sc_resetstats(void)
+{
+	s_rc = s_wc = 0;
+}
+
 uint8_t
 sc_get(void)
 {
@@ -92,6 +107,7 @@ sc_get(void)
 		CE("serial comm failed on read (%zd)", r);
 		return -1;
 	}
+	s_rc++;
 	return c;
 }
 
@@ -103,6 +119,7 @@ sc_put(uint8_t c)
 	D("write: %zd", r);
 	if (r == -1)
 		CE("serial comm failed on write");
+	s_wc++;
 }
 
 static void

@@ -168,77 +168,80 @@ main(int argc, char **argv)
 	} else
 		N("will /not/ (re)initialize target...");
 
-	if (!s_stdin)
-		return ev_dispatch(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
-
-	char *line = NULL;
-	size_t linesize = 0;
-	ssize_t linelen;
-
-	size_t nargc = 8;
-	char **nargv = malloc(nargc * sizeof *nargv); //grows
-
 	bool fail = false;
 
-	while ((linelen = getline(&line, &linesize, stdin)) != -1) {
-		D("read line: '%s'", line);
-		char *dup = strdup(line);
-		while (isspace(*dup))
-			dup++;
-		D("skipped leading WS: '%s'", dup);
+	if (!s_stdin)
+		fail = !ev_dispatch(argc, argv);
+	else {
+		char *line = NULL;
+		size_t linesize = 0;
+		ssize_t linelen;
 
-		char *p = strchr(dup, '#');
-		if (p)
-			*p = '\0';
+		size_t nargc = 8;
+		char **nargv = malloc(nargc * sizeof *nargv); //grows
 
-		D("kill comments: '%s'", dup);
 
-		p = dup + strlen(dup);
+		while ((linelen = getline(&line, &linesize, stdin)) != -1) {
+			D("read line: '%s'", line);
+			char *dup = strdup(line);
+			while (isspace(*dup))
+				dup++;
+			D("skipped leading WS: '%s'", dup);
 
-		while (p > dup) {
-			if (isspace(*--p))
+			char *p = strchr(dup, '#');
+			if (p)
 				*p = '\0';
-			else
-				break;
-		}
 
-		D("strip trailing WS: '%s'", dup);
+			D("kill comments: '%s'", dup);
 
-		if (strlen(dup)) {
-			int ac = splitquoted(dup, nargv, nargc);
-			if (ac < 0)
-				C("failed to split! (raw line: '%s')", line);
+			p = dup + strlen(dup);
 
-			bool resized = false;
-			while ((size_t)ac > nargc) {
-				nargc *= 2;
-				char **na = malloc(nargc * sizeof *na);
-				if (!na)
-					CE("malloc");
-				free(nargv);
-				nargv = na;
-				resized = true;
-			}
-
-			if (resized)
-				ac = splitquoted(dup, nargv, nargc);
-
-
-			if (!ev_dispatch(ac, nargv)) {
-				fail = false;
-				if (s_failterm)
-					C("eval failed on (raw) line '%s', aborting",
-					    line);
+			while (p > dup) {
+				if (isspace(*--p))
+					*p = '\0';
 				else
-					W("eval failed on (raw) line '%s'", line);
+					break;
 			}
-		}
 
-		free(dup);
+			D("strip trailing WS: '%s'", dup);
+
+			if (strlen(dup)) {
+				int ac = splitquoted(dup, nargv, nargc);
+				if (ac < 0)
+					C("failed to split! (raw line: '%s')", line);
+
+				bool resized = false;
+				while ((size_t)ac > nargc) {
+					nargc *= 2;
+					char **na = malloc(nargc * sizeof *na);
+					if (!na)
+						CE("malloc");
+					free(nargv);
+					nargv = na;
+					resized = true;
+				}
+
+				if (resized)
+					ac = splitquoted(dup, nargv, nargc);
+
+
+				if (!ev_dispatch(ac, nargv)) {
+					fail = false;
+					if (s_failterm)
+						C("eval failed on (raw) line '%s', aborting",
+						    line);
+					else
+						W("eval failed on (raw) line '%s'", line);
+				}
+			}
+
+			free(dup);
+		}
 	}
 
 	if (ferror(stdin))
 		CE("getline");
+	sc_dumpstats();
 
 	return fail ? EXIT_FAILURE : EXIT_SUCCESS;
 }
