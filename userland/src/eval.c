@@ -33,8 +33,7 @@
 	ac -= optind;                                      \
 	av += optind;                                      \
                                                            \
-	optreset = 1;                                      \
-	optind = 1;
+	optrst();
 
 static smap_t s_dspmap;
 
@@ -82,6 +81,8 @@ static void usage_WRAW(FILE *str, const char *a0, int ec);
 static void usage_RRAW(FILE *str, const char *a0, int ec);
 static void usage_DELAY(FILE *str, const char *a0, int ec);
 static void usage_WAITHALT(FILE *str, const char *a0, int ec);
+
+void optrst(void);
 
 bool
 ev_init(void)
@@ -662,3 +663,13 @@ usage_WAITHALT(FILE *str, const char *a0, int ec)
 
 #undef USG
 
+void
+optrst(void)
+{
+#ifdef PLATFORM_LINUX
+	optind = 0;
+#else
+	optreset = 1;
+	optind = 1;
+#endif
+}

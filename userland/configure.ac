@@ -17,6 +17,19 @@ AC_PROG_MAKE_SET
 
 AC_CHECK_LIB([srsbsns], [splitquoted], [], [AC_MSG_ERROR([libsrsbsns not installed?])])
 
+AC_CANONICAL_HOST
+case $host_os in
+	linux*)
+AC_DEFINE([PLATFORM_LUNIX],[1],[defined if we are on the losers unix])
+	;;
+	*bsd*)
+AC_DEFINE([PLATFORM_BSD],[1],[defined if we are on a BSD])
+	;;
+	*)
+AC_DEFINE([PLATFORM_UNKNOWN],[1],[defined if we cant tell])
+	;;
+esac
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
 AC_OUTPUT

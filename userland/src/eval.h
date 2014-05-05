@@ -12,4 +12,6 @@ typedef bool (*ev_fn)(int ac, char **av);
 bool ev_init(void);
 bool ev_dispatch(int ac, char **av);
 
+void optrst(void); //we need this for linux compat
+
 #endif /* EVAL_H */

@@ -63,10 +63,10 @@ sc_init(const char *device, int baud)
 	if (tcgetattr(fd, &cntrl) != 0)
 		CE("tcgetattr");
 
-	if (cfsetospeed(&cntrl, baud) != 0)
+	if (cfsetospeed(&cntrl, mkbaud(baud)) != 0)
 		CE("cfsetospeed");
 
-	if (cfsetispeed(&cntrl, baud) != 0)
+	if (cfsetispeed(&cntrl, mkbaud(baud)) != 0)
 		CE("cfsetispeed");
 
 	cntrl.c_cflag &= ~(CSIZE|PARENB|HUPCL);
@@ -175,3 +175,22 @@ sc_cleanup(void)
 	close(s_fd);
 }
 
+int
+mkbaud(int actualrate)
+{
+#ifdef PLATFORM_LINUX
+	switch (actualrate) {
+		case 1800: return B1800;
+		case 2400: return B2400;
+		case 4800: return B4800;
+		case 9600: return B9600;
+		case 19200: return B19200;
+		case 38400: return B38400;
+		case 115200: return B115200;
+		default:
+			C("lunix cant into baud rate %d :s", actualrate);
+	}
+#else
+	return actualrate;
+#endif
+}

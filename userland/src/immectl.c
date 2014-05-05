@@ -86,8 +86,7 @@ process_args(int *argc, char ***argv)
 	*argc -= optind;
 	*argv += optind;
 
-	optreset = 1;
-	optind = 1;
+	optrst();
 }
 
 

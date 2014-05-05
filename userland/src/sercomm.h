@@ -14,4 +14,6 @@ void sc_put(uint8_t c);
 void sc_dumpstats(void);
 void sc_resetstats(void);
 
+int mkbaud(int actualrate); //we need this for linux compat......
+
 #endif /* SERCOMM_H */
