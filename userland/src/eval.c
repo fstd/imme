@@ -330,8 +330,7 @@ ev_RUNINSTR(int ac, char **av)
 	ac -= optind;
 	av += optind;
 
-	optreset = 1;
-	optind = 1;
+	optrst();
 
 	if (ac < 1 || ac > 3) {
 		usage_RUNINSTR(stderr, a0, EXIT_FAILURE);
