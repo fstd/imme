@@ -174,10 +174,13 @@ ev_REINIT(int ac, char **av)
 		return false;
 	/* after a reinit, the LOCK bit is set, for some reason, even if
 	 * the interface isn't actually locked.
-	 * issuing a HALT ``fixes'' this, and does not matter
-	 * as the CPU is halted anyway (with pc=0) */
-	sc_put('H');
-	return sc_get() == 'H';
+	 * issuing a NOP ``fixes'' this, and does not affect PC */
+
+	sc_put('I');
+	sc_put(1);
+	sc_put(0); //NOP
+	sc_get(); //discard
+	return true;
 }
 
 static bool
