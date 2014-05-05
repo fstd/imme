@@ -48,6 +48,11 @@
 #define DDR_LED DDRD
 #define DBIT_LED DDD6
 
+#define PORT_LED2 PORTD
+#define PBIT_LED2 PD2
+#define DDR_LED2 DDRD
+#define DBIT_LED2 DDD2
+
 
 #define RSTON PORT_RST &= ~(1<<PBIT_RST)
 #define RSTOFF PORT_RST |= (1<<PBIT_RST)
@@ -259,6 +264,7 @@ main(void)
 	DDR_RST |= (1<<DBIT_RST);
 
 	DDR_LED |= (1<<DBIT_LED);
+	DDR_LED2 |= (1<<DBIT_LED2);
 	DDR_CLK |= (1<<DBIT_CLK);
 	DDR_DOUT |= (1<<DBIT_DOUT);
 
@@ -266,7 +272,7 @@ main(void)
 	PORTA = ~(1<<PBIT_DIN); //it's all on PORTD EXCEPT THE ADC IN
 	PORTB = 0xff; //it's all on PORTD
 	PORTC = 0xff; //it's all on PORTD
-	PORTD |= ~((1<<PBIT_DOUT)|(1<<PBIT_CLK)|(1<<PBIT_LED)); //we want the pullup on PBIT_DIN
+	PORTD |= ~((1<<PBIT_DOUT)|(1<<PBIT_CLK)|(1<<PBIT_LED)|(1<<PBIT_LED2)); //we want the pullup on PBIT_DIN
 	//PD5-6 are UART
 	//PD0-4 are what we use to access the thingy
 
@@ -279,17 +285,39 @@ main(void)
 	/* flash LED to signal we've booted */
 
 	PORT_LED |= (1<<PBIT_LED);
+	PORT_LED2 |= (1<<PBIT_LED2);
 	_delay_ms(100);
 	PORT_LED &= ~(1<<PBIT_LED);
+	PORT_LED2 &= ~(1<<PBIT_LED2);
+	_delay_ms(100);
+	PORT_LED |= (1<<PBIT_LED);
+	PORT_LED2 |= (1<<PBIT_LED2);
+	_delay_ms(100);
+	PORT_LED &= ~(1<<PBIT_LED);
+	PORT_LED2 &= ~(1<<PBIT_LED2);
+	_delay_ms(100);
 
 
 
 	bool echo = false;
 
 	for(;;) {
-		PORT_LED |= (1<<PBIT_LED);
-		uint8_t c = uart_get();
-		PORT_LED &= ~(1<<PBIT_LED);
+		PORT_LED2 |= (1<<PBIT_LED2);
+		uint8_t c = 0;
+		uint16_t db = 0;
+		for (;;) {
+			if (uart_avail()) {
+				c = uart_get();
+				break;
+			}
+
+			if (db == 0 && !(PINA & (1<<PA1))) {
+				uart_put('x');
+				db = 30000;
+			} else if (db > 0)
+				db--;
+		}
+		PORT_LED2 &= ~(1<<PBIT_LED2);
 		if (echo)
 			uart_put(c);
 
