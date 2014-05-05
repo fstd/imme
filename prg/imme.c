@@ -357,9 +357,6 @@ main(void)
 				num--;
 			}
 
-			while (num--)
-				uart_get(); //discard excess elements
-
 			uart_put(cmd_exec(d, c));
 
 			break;}
@@ -371,9 +368,6 @@ main(void)
 				d[c++] = uart_get();
 				num--;
 			}
-
-			while (num--)
-				uart_get(); //discard excess elements
 
 			uart_put(cmd_step_replace(d, c));
 
