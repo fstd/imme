@@ -271,8 +271,8 @@ main(void)
 	//PD5-6 are UART
 	//PD0-4 are what we use to access the thingy
 
-	adc_init(6);
-	uart_init(12); //38400
+	adc_init(2);
+	uart_init(25);
 
 	sei();
 
