@@ -131,7 +131,7 @@ ev_DBGDUMP(int ac, char **av)
 
 	sc_put('!');
 	uint8_t b1 = sc_get();
-	printf("%#02hhx %#02hhx\n", b1, sc_get());
+	printf("%#2.2hhx %#2.2hhx\n", b1, sc_get());
 	return true;
 }
 
@@ -190,7 +190,7 @@ ev_STATUS(int ac, char **av)
 		usage_STATUS(stderr, av[0], EXIT_FAILURE);
 
 	sc_put('s');
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 
@@ -202,7 +202,7 @@ ev_CHIPID(int ac, char **av)
 
 	sc_put('i');
 	uint8_t b1 = sc_get();
-	printf("%#02hhx %#02hhx\n", b1, sc_get());
+	printf("%#2.2hhx %#2.2hhx\n", b1, sc_get());
 	return true;
 }
 
@@ -214,7 +214,7 @@ ev_GETPC(int ac, char **av)
 
 	sc_put('p');
 	uint8_t b1 = sc_get();
-	printf("%#02hhx %#02hhx\n", b1, sc_get());
+	printf("%#2.2hhx %#2.2hhx\n", b1, sc_get());
 	return true;
 }
 
@@ -255,7 +255,7 @@ ev_RCFG(int ac, char **av)
 		usage_RCFG(stderr, av[0], EXIT_FAILURE);
 
 	sc_put('c');
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 
@@ -269,7 +269,7 @@ ev_WCFG(int ac, char **av)
 		usage_WCFG(stderr, a0, EXIT_FAILURE);
 
 	uint8_t b = (uint8_t)strtoul(av[0], NULL, 0);
-	D("writing cfg byte %#02hhx", b);
+	D("writing cfg byte %#2.2hhx", b);
 
 	sc_put('C');
 	sc_put(b);
@@ -290,11 +290,11 @@ ev_REPLINSTR(int ac, char **av)
 	sc_put(ac);
 	while(ac--) {
 		uint8_t b = (uint8_t)strtoul(*av++, NULL, 0);
-		D("writing instr byte %#02hhx", b);
+		D("writing instr byte %#2.2hhx", b);
 		sc_put(b);
 	}
 
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 
@@ -314,11 +314,11 @@ ev_RUNINSTR(int ac, char **av)
 	sc_put(ac);
 	while(ac--) {
 		uint8_t b = (uint8_t)strtoul(*av++, NULL, 0);
-		D("writing instr byte %#02hhx", b);
+		D("writing instr byte %#2.2hhx", b);
 		sc_put(b);
 	}
 
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 	sc_put('I');
 }
@@ -330,7 +330,7 @@ ev_NEXTINSTR(int ac, char **av)
 		usage_NEXTINSTR(stderr, av[0], EXIT_FAILURE);
 
 	sc_put('n');
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 
@@ -346,11 +346,11 @@ ev_BRK(int ac, char **av)
 	sc_put('B');
 	while(ac--) {
 		uint8_t b = (uint8_t)strtoul(*av++, NULL, 0);
-		D("writing brk byte %#02hhx", b);
+		D("writing brk byte %#2.2hhx", b);
 		sc_put(b);
 	}
 
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 

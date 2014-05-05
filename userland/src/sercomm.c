@@ -87,7 +87,7 @@ sc_get(void)
 	uint8_t c = 0;
 	D("reading from %d...", s_fd);
 	ssize_t r = read(s_fd, &c, 1);
-	D("read: %zd: %#02hhx ('%c')", r, c, c);
+	D("read: %zd: %#2.2hhx ('%c')", r, c, c);
 	if (r != 1) {
 		CE("serial comm failed on read (%zd)", r);
 		return -1;
@@ -98,7 +98,7 @@ sc_get(void)
 void
 sc_put(uint8_t c)
 {
-	D("writing to %d: %#02hhx ('%c')", s_fd, c, c);
+	D("writing to %d: %#2.2hhx ('%c')", s_fd, c, c);
 	ssize_t r = write(s_fd, &c, 1);
 	D("write: %zd", r);
 	if (r == -1)

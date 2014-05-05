@@ -105,7 +105,7 @@ read_one(int fd)
 		return -2;
 	}
 
-	D("read from %d: %#02hhx ('%c')", fd, x, x);
+	D("read from %d: %#2.2hhx ('%c')", fd, x, x);
 
 	return x;
 		
@@ -120,7 +120,7 @@ write_one(int fd, uint8_t b)
 		return false;
 	}
 	
-	D("write to %d: %#02hhx ('%c')", fd, b, b);
+	D("write to %d: %#2.2hhx ('%c')", fd, b, b);
 
 	return true;
 }
