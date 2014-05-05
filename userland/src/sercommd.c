@@ -232,7 +232,7 @@ init(int *argc, char ***argv)
 
 	D("initialized sercomm (dev: '%s', baud: %d)", s_dev, s_baud);
 	
-	s_sck = addr_bind_socket_p("127.0.0.1", 34321, NULL, 0, 0, 0);
+	s_sck = addr_bind_socket_p("localhost", 34321, NULL, 0, 0, 0);
 	if (s_sck == -1)
 		CE("addr_bind_socket_p");
 	
