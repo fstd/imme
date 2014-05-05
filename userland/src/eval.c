@@ -665,7 +665,7 @@ usage_WAITHALT(FILE *str, const char *a0, int ec)
 void
 optrst(void)
 {
-#ifdef PLATFORM_LINUX
+#ifdef PLATFORM_LUNIX
 	optind = 0;
 #else
 	optreset = 1;

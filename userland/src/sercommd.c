@@ -15,6 +15,10 @@
 #include <sys/resource.h>
 #include <sys/select.h>
 
+#ifdef PLATFORM_LUNIX
+# include <unistd.h>
+#endif
+
 #include <getopt.h>
 
 #include <libsrsbsns/misc.h>
