@@ -311,13 +311,30 @@ static bool
 ev_RUNINSTR(int ac, char **av)
 {
 	const char *a0 = av[0];
-	NOOPTS(RUNINSTR)
+	bool discard = false;
+	for(int ch; (ch = getopt(ac, av, "hd")) != -1;) {
+		switch (ch) {
+		case 'd':
+			discard = true;
+			break;
+		case 'h':
+			usage_RUNINSTR(stdout, a0, EXIT_SUCCESS);
+			break;
+		case '?':
+		default:
+			usage_RUNINSTR(stderr, a0, EXIT_FAILURE);
+		}
+	}
+
+	ac -= optind;
+	av += optind;
+
+	optreset = 1;
+	optind = 1;
 
 	if (ac < 1 || ac > 3) {
-		N("huh");
 		usage_RUNINSTR(stderr, a0, EXIT_FAILURE);
-	} else
-		N("x");
+	} 
 
 	sc_put('I');
 	sc_put(ac);
@@ -327,7 +344,10 @@ ev_RUNINSTR(int ac, char **av)
 		sc_put(b);
 	}
 
-	printf("%#2.2hhx\n", sc_get());
+	uint8_t b = sc_get();
+	if (!discard)
+		printf("%#2.2hhx\n", b);
+
 	return true;
 	sc_put('I');
 }
@@ -385,7 +405,7 @@ ev_RRAW(int ac, char **av)
 		usage_RRAW(stderr, av[0], EXIT_FAILURE);
 
 	sc_put('<');
-	printf("%#02hhx\n", sc_get());
+	printf("%#2.2hhx\n", sc_get());
 	return true;
 }
 
