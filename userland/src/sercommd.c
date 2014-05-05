@@ -28,8 +28,13 @@
 #include "eval.h"
 #include "dbglog.h"
 
-#define DEF_DEV "/dev/dtyU0"
-#define DEF_BAUD 38400
+#ifdef PLATFORM_LUNIX
+# define DEF_DEV "/dev/ttyUSB0"
+#else
+# define DEF_DEV "/dev/dtyU0"
+#endif
+
+#define DEF_BAUD 115200
 
 static char *s_dev;
 static int s_baud;

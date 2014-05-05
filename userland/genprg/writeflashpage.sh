@@ -22,14 +22,8 @@ fi
 
 pagesz=$((${2}*${3}))
 
-echo "MSTRST"
-echo "DELAY 100000"
-echo "REINIT"
-./initclock.sh
-
-
 ./writexdata.sh -a 0xf000 -n $pagesz
-./mkprogroutine.sh $1 $2 $3 $4 | ./writexdata.sh $((0xf000+${pagesz}))
+./mkprogroutine.sh $1 $2 $3 $4 | ./writexdata.sh -a $((0xf000+${pagesz}))
 
 echo "RUNINSTR -d 0x75 0xC7 0x51"
 ./setpc.sh $((0xf000+${pagesz}))

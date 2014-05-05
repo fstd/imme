@@ -100,14 +100,14 @@ getbyte(void)
 	uint8_t r = 0;
 	for (int8_t bit = 7; bit >= 0; bit--) {
 		CLKHI; //devices drives
-		_delay_us(1);
+		//_delay_us(1);
 
 		if (bsample())
 			r |= (1<<bit);
 
 		CLKLO;
 
-		_delay_us(1);
+		//_delay_us(1);
 	}
 
 	/* enable data output */
@@ -126,11 +126,11 @@ putbyte(uint8_t b)
 		else
 			DATALO;
 
-		_delay_us(1);
+		//_delay_us(1);
 
 		CLKLO; //device samples
 
-		_delay_us(1);
+		//_delay_us(1);
 	}
 
 	DATALO;
@@ -277,7 +277,7 @@ main(void)
 	//PD0-4 are what we use to access the thingy
 
 	adc_init(2);
-	uart_init(25);
+	uart_init(16); UCSRA |= (1<<U2X); //115200 baud
 
 	sei();
 
