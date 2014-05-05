@@ -58,6 +58,8 @@ static bool ev_NEXTINSTR(int ac, char **av);
 static bool ev_BRK(int ac, char **av);
 static bool ev_WRAW(int ac, char **av);
 static bool ev_RRAW(int ac, char **av);
+static bool ev_DELAY(int ac, char **av);
+static bool ev_WAITHALT(int ac, char **av);
 
 static void usage_DBGDUMP(FILE *str, const char *a0, int ec);
 static void usage_PING(FILE *str, const char *a0, int ec);
@@ -78,6 +80,8 @@ static void usage_NEXTINSTR(FILE *str, const char *a0, int ec);
 static void usage_BRK(FILE *str, const char *a0, int ec);
 static void usage_WRAW(FILE *str, const char *a0, int ec);
 static void usage_RRAW(FILE *str, const char *a0, int ec);
+static void usage_DELAY(FILE *str, const char *a0, int ec);
+static void usage_WAITHALT(FILE *str, const char *a0, int ec);
 
 bool
 ev_init(void)
@@ -106,6 +110,8 @@ ev_init(void)
 	smap_put(s_dspmap, "BRK", ev_BRK);
 	smap_put(s_dspmap, "WRAW", ev_WRAW);
 	smap_put(s_dspmap, "RRAW", ev_RRAW);
+	smap_put(s_dspmap, "DELAY", ev_DELAY);
+	smap_put(s_dspmap, "WAITHALT", ev_WAITHALT);
 
 	return true;
 }
@@ -380,6 +386,44 @@ ev_RRAW(int ac, char **av)
 	return true;
 }
 
+static bool
+ev_DELAY(int ac, char **av)
+{
+	const char *a0 = av[0];
+	NOOPTS(DELAY)
+
+	if (ac != 1)
+		usage_DELAY(stderr, a0, EXIT_FAILURE);
+
+	unsigned int d = (unsigned int)strtoul(*av++, NULL, 0);
+	unsigned int s = d / 1000000U;
+	unsigned int us = d % 1000000U;
+
+	if (s)
+		sleep(s);
+	
+	if (us)
+		usleep(us);
+
+	return true;
+}
+
+
+static bool
+ev_WAITHALT(int ac, char **av)
+{
+	if (ac > 1)
+		usage_WAITHALT(stderr, av[0], EXIT_FAILURE);
+
+	N("waiting for CPU to halt...");
+	do {
+		usleep(50000); //generous..
+		sc_put('s');
+	} while (!(sc_get() & 0x20));
+	N("CPU halted...");
+
+	return true;
+}
 
 #define USG(STR) fputs(STR "\n", str)
 
@@ -571,6 +615,24 @@ usage_RRAW(FILE *str, const char *a0, int ec)
 	USG("");
 	USG("\t(no arguments)");
 	USG("\toutput is the byte read");
+	exit(ec);
+}
+
+static void
+usage_DELAY(FILE *str, const char *a0, int ec)
+{
+	fprintf(str, "usage: "PACKAGE_NAME" [...] %s [-h] <microseconds>\n", a0);
+	USG("");
+	USG("\tintroduce an artificial delay.  don't expect accuracy.");
+	exit(ec);
+}
+
+static void
+usage_WAITHALT(FILE *str, const char *a0, int ec)
+{
+	fprintf(str, "usage: "PACKAGE_NAME" [...] %s [-h]\n", a0);
+	USG("");
+	USG("\twait until the halted-bit is set in the debug status byte");
 	exit(ec);
 }
 
