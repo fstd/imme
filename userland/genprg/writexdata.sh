@@ -29,6 +29,7 @@ fi
 
 addrhi="0x$(printf '%02x' $((${addr}/256)))"
 addrlo="0x$(printf '%02x' $((${addr}%256)))"
+num=$(($num)) #might be in hex
 
 echo "RUNINSTR -d 0x90 $addrhi $addrlo"
 

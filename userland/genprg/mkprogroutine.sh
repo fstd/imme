@@ -8,7 +8,7 @@ set -e
 opts="h"
 
 usage() {
-	echo "usage: $0 [$opts] <address> <flash_word_size> <words_per_flash_page> <erase_page (0 or 1)>" >&2
+	echo "usage: $0 [-$opts] <address> <flash_word_size> <words_per_flash_page> <erase_page (0 or 1)>" >&2
 	    exit 1
 }
 
