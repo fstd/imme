@@ -9,6 +9,7 @@ set -e
 opts="hd:b:D"
 usage() {
 	echo "usage: $0 [-$opts] <blob>" >&2
+	echo " -d, -D and -b are passed to immectl (see immectl -h)" >&2
 	exit 1
 }
 
@@ -64,6 +65,10 @@ if [ $remain -gt 0 ]; then
 fi
 
 tmp=$(mktemp /tmp/progflash.XXXXXX)
+vfy=$(mktemp /tmp/progflash.XXXXXX)
+
+trap 'rm -f "$tmp" "$vfy"' EXIT
+
 
 echo "resetting master" >&2
 echo MSTRST | $immecmd
@@ -98,6 +103,16 @@ while [ $page -lt $pages ]; do
 
 	page=$(($page+1))
 done
-echo "finished..." >&2
+echo "finished writing, verifying..." >&2
 
-rm "$tmp"
+head -c $(($pages*$pagesz)) </dev/zero | tr '\0' '\377' >$vfy
+dd if="$1" of="$vfy" bs=$pagesz count=$pages conv=notrunc 2>/dev/null
+./readcode.sh -X -a 0 -n $(($pages*$pagesz)) -b | $immecmd >$tmp 
+
+if ! cmp $vfy $tmp; then
+	echo "verification failed!" >&2
+	exit 1
+else
+	echo "OK"
+fi
+
