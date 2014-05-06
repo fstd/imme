@@ -1,0 +1,9 @@
+IMME(c1110) <--PROPR--> ATmega16 <--RS232--> PC
+
+prg/ contains the atmega16 firmware used for interfacing the imme; also contains schematics (of what i have on breadboard to talk to the imme)
+userland/ contains immectl for low-level control of the debug interface, high level routines are in userland/genprg.
+core/ (will) contain custom firmware for the imme's c1110
+
+programming the flash:
+cd userland/genprg
+./progflash <binary image>
