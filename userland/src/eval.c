@@ -313,8 +313,12 @@ ev_RUNINSTR(int ac, char **av)
 {
 	const char *a0 = av[0];
 	bool discard = false;
-	for(int ch; (ch = getopt(ac, av, "hd")) != -1;) {
+	bool binary = false;
+	for(int ch; (ch = getopt(ac, av, "hdb")) != -1;) {
 		switch (ch) {
+		case 'b':
+			binary = true;
+			break;
 		case 'd':
 			discard = true;
 			break;
@@ -345,11 +349,14 @@ ev_RUNINSTR(int ac, char **av)
 	}
 
 	uint8_t b = sc_get();
-	if (!discard)
-		printf("%#2.2hhx\n", b);
+	if (!discard) {
+		if (binary)
+			putchar(b);
+		else
+			printf("%#2.2hhx\n", b);
+	}
 
 	return true;
-	sc_put('I');
 }
 
 static bool
